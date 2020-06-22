@@ -108,9 +108,9 @@ $ftp_traffic1 attach-agent $tcp_src1
 # Let's trace some variables
 $tcp_src1 attach $tracefile
 $tcp_src1 tracevar cwnd_
-$tcp_src1 tracevar ssthresh_
+# $tcp_src1 tracevar ssthresh_
 $tcp_src1 tracevar ack_
-$tcp_src1 tracevar maxseq_
+# $tcp_src1 tracevar maxseq_
 
 # $tcp_src1 attach $tracefile
 # $tcp_src1 tracevar cwnd_
@@ -121,11 +121,11 @@ $tcp_src1 tracevar maxseq_
 
 $ns at 1.0 "$ftp_traffic1 start"
 # $ns at 1.0 "$ftp_traffic2 start"
-$ns at 1000.0 "$ftp_traffic1 stop"
+$ns at 50.0 "$ftp_traffic1 stop"
 # $ns at 10.0 "$ftp_traffic2 stop"
 
 #Call the finish procedure after 5 seconds of simulation time
-$ns at 1001.0 "finish"
+$ns at 51.0 "finish"
 
 #Run the simulation
 $ns run
