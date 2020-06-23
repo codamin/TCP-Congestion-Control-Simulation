@@ -6,9 +6,12 @@ $ns color 1 Blue
 $ns color 2 Red
 
 #Open the NAM trace file
-set namfile [open out.nam w]
+set namName [lindex $argv 1]
+set namfile [open $namName w]
 $ns namtrace-all $namfile
-set tracefile [open out.tr w]
+
+set traceName [lindex $argv 2]
+set tracefile [open $traceName w]
 $ns trace-all $tracefile
 
 
@@ -70,9 +73,18 @@ $ns duplex-link-op $n4 $n6 orient right-down
 $ns duplex-link-op $n2 $n3 queuePos 0.5
 
 #Setup a TCP connection:
-
+set tcpNum [lindex $argv 0]
+set tcpConType Agent/TCP/Reno
+if {$tcpNum == 1} {
+    set tcpConType Agent/TCP/Newreno
+} elseif {$tcpNum == 2} {
+    set tcpConType Agent/TCP/Tahoe
+} elseif {$tcpNum == 3} {
+    set tcpConType Agent/TCP/Vegas
+}
+puts $tcpConType
 #create tcp source1
-set tcp_src1 [new Agent/TCP/Reno]
+set tcp_src1 [new $tcpConType]
 $tcp_src1 set ttl_ 64
 $tcp_src1 set fid_ 1
 $ns attach-agent $n1 $tcp_src1
@@ -86,7 +98,7 @@ $tcp_sink1 set fid_ 1
 $ns connect $tcp_src1 $tcp_sink1
 
 #create tcp source2
-set tcp_src2 [new Agent/TCP/Reno]
+set tcp_src2 [new $tcpConType]
 $tcp_src2 set ttl_ 64
 $tcp_src2 set fid_ 2
 $ns attach-agent $n2 $tcp_src2
