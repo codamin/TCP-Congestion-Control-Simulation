@@ -29,4 +29,4 @@ set result [exec [info nameofexecutable] script.tcl 3 out/out306.nam out/out306.
 set result [exec [info nameofexecutable] script.tcl 3 out/out307.nam out/out307.tr]
 set result [exec [info nameofexecutable] script.tcl 3 out/out308.nam out/out308.tr]
 set result [exec [info nameofexecutable] script.tcl 3 out/out309.nam out/out309.tr]
-set result [exec [info nameofexecutable] script.tcl 3 out/out310.nam out/out310.tr]
+set result [exec [info nameofexecutable] script.tcl 3 out/out310.nam out/out310.tr] 
