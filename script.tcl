@@ -34,6 +34,9 @@ set min_delay 5
 set max_delay 25
 
 #Create six nodes
+#for {set i 1} {$i <7} {incr i} {
+#    set n($i) [$ns node]
+#}
 set n1 [$ns node]
 set n2 [$ns node]
 set n3 [$ns node]
