@@ -23,7 +23,7 @@ proc finish {} {
     close $namfile
     close $tracefile
     #Execute NAM on the trace file
-    exec nam out.nam &
+    #exec nam out.nam &
     exit 0
 }
 
@@ -78,7 +78,7 @@ set tcpConType Agent/TCP/Reno
 if {$tcpNum == 1} {
     set tcpConType Agent/TCP/Newreno
 } elseif {$tcpNum == 2} {
-    set tcpConType Agent/TCP/Tahoe
+    set tcpConType Agent/TCP
 } elseif {$tcpNum == 3} {
     set tcpConType Agent/TCP/Vegas
 }
