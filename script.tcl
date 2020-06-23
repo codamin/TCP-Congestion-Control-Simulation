@@ -23,20 +23,21 @@ proc finish {} {
     close $namfile
     close $tracefile
     #Execute NAM on the trace file
-    #exec nam out.nam &
+    exec nam out/out101.nam &
     exit 0
 }
 
 # generate random integer number in the range [0,max]
 proc rand {min max} {
-    set res [expr {$min + int(rand()*(($max-$min)+1))}]
-    puts "delay $res\n"
-    return res
+    return [expr {$min + int(rand()*(($max-$min)+1))}]
 }
 
 # set min and max random delay
 set min_delay 5
 set max_delay 25
+
+set d1 [rand $min_delay $max_delay]
+set d2 [rand $min_delay $max_delay]
 
 #Create six nodes
 #for {set i 1} {$i <7} {incr i} {
@@ -51,10 +52,10 @@ set n6 [$ns node]
 
 #Create links between the nodes
 $ns duplex-link $n1 $n3 100Mb 5ms DropTail
-$ns duplex-link $n2 $n3 100Mb [rand $min_delay $max_delay]ms DropTail
+$ns duplex-link $n2 $n3 100Mb 85ms DropTail
 $ns duplex-link $n3 $n4 0.1Mb 1ms DropTail
 $ns duplex-link $n4 $n5 100Mb 5ms DropTail
-$ns duplex-link $n4 $n6 100Mb [rand $min_delay $max_delay]ms DropTail
+$ns duplex-link $n4 $n6 100Mb 85ms DropTail
 
 #Set Queue Size of links
 $ns queue-limit $n3 $n4 10
@@ -132,14 +133,9 @@ $tcp_src2 tracevar cwnd_
 # $tcp_src1 tracevar ssthresh_
 $tcp_src1 tracevar ack_
 $tcp_src2 tracevar ack_
-# $tcp_src1 tracevar maxseq_
 
-# $tcp_src1 attach $tracefile
-# $tcp_src1 tracevar cwnd_
-# $tcp_src1 tracevar ssthresh_
-# $tcp_src1 tracevar ack_
-# $tcp_src1 tracevar maxseq_
-
+$tcp_src1 tracevar rtt_
+$tcp_src2 tracevar rtt_
 
 $ns at 0.0 "$ftp_traffic1 start"
 $ns at 0.0 "$ftp_traffic2 start"
