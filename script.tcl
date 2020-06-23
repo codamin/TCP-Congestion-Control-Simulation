@@ -26,7 +26,9 @@ proc finish {} {
 
 # generate random integer number in the range [0,max]
 proc rand {min max} {
-    return [expr {$min + int(rand()*($max+1))}]
+    set res [expr {$min + int(rand()*(($max-$min)+1))}]
+    puts "delay $res\n"
+    return res
 }
 
 # set min and max random delay
@@ -96,20 +98,25 @@ $ns connect $tcp_src2 $tcp_sink2
 
 # Setup an FTP over both TCP connections 
 set ftp_traffic1 [new Application/FTP] 
-# set ftp_traffic2 [new Application/FTP]
+set ftp_traffic2 [new Application/FTP]
 $ftp_traffic1 set type_ FTP 
-# $ftp_traffic2 set type_ FTP 
+$ftp_traffic2 set type_ FTP 
 $ftp_traffic1 attach-agent $tcp_src1
-# $ftp_traffic2 attach-agent $tcp_src2
+$ftp_traffic2 attach-agent $tcp_src2
 
 # Detach tcp and sink agents (not really necessary)
 # $ns at 4.5 "$ns detach-agent $n0 $tcp ; $ns detach-agent $n3 $sink"
 
 # Let's trace some variables
 $tcp_src1 attach $tracefile
+$tcp_src2 attach $tracefile
+
 $tcp_src1 tracevar cwnd_
+$tcp_src2 tracevar cwnd_
+
 # $tcp_src1 tracevar ssthresh_
 $tcp_src1 tracevar ack_
+$tcp_src2 tracevar ack_
 # $tcp_src1 tracevar maxseq_
 
 # $tcp_src1 attach $tracefile
@@ -119,13 +126,13 @@ $tcp_src1 tracevar ack_
 # $tcp_src1 tracevar maxseq_
 
 
-$ns at 1.0 "$ftp_traffic1 start"
-# $ns at 1.0 "$ftp_traffic2 start"
-$ns at 50.0 "$ftp_traffic1 stop"
-# $ns at 10.0 "$ftp_traffic2 stop"
+$ns at 0.0 "$ftp_traffic1 start"
+$ns at 0.0 "$ftp_traffic2 start"
+$ns at 1000.0 "$ftp_traffic1 stop"
+$ns at 1000.0 "$ftp_traffic2 stop"
 
 #Call the finish procedure after 5 seconds of simulation time
-$ns at 51.0 "finish"
+$ns at 1000.0 "finish"
 
 #Run the simulation
 $ns run
