@@ -12,8 +12,6 @@ $ns namtrace-all $namfile
 
 set traceName [lindex $argv 2]
 set tracefile [open $traceName w]
-$ns trace-all $tracefile
-
 
 #Define a 'finish' procedure
 proc finish {} {
@@ -23,7 +21,7 @@ proc finish {} {
     close $namfile
     close $tracefile
     #Execute NAM on the trace file
-    exec nam out/out101.nam &
+    # exec nam out/out101.nam &
     exit 0
 }
 
@@ -36,13 +34,7 @@ proc rand {min max} {
 set min_delay 5
 set max_delay 25
 
-set d1 [rand $min_delay $max_delay]
-set d2 [rand $min_delay $max_delay]
-
 #Create six nodes
-#for {set i 1} {$i <7} {incr i} {
-#    set n($i) [$ns node]
-#}
 set n1 [$ns node]
 set n2 [$ns node]
 set n3 [$ns node]
@@ -52,10 +44,10 @@ set n6 [$ns node]
 
 #Create links between the nodes
 $ns duplex-link $n1 $n3 100Mb 5ms DropTail
-$ns duplex-link $n2 $n3 100Mb 85ms DropTail
+$ns duplex-link $n2 $n3 100Mb [rand $min_delay $max_delay]ms DropTail
 $ns duplex-link $n3 $n4 0.1Mb 1ms DropTail
 $ns duplex-link $n4 $n5 100Mb 5ms DropTail
-$ns duplex-link $n4 $n6 100Mb 85ms DropTail
+$ns duplex-link $n4 $n6 100Mb [rand $min_delay $max_delay]ms DropTail
 
 #Set Queue Size of links
 $ns queue-limit $n3 $n4 10
@@ -124,18 +116,35 @@ $ftp_traffic2 attach-agent $tcp_src2
 # $ns at 4.5 "$ns detach-agent $n0 $tcp ; $ns detach-agent $n3 $sink"
 
 # Let's trace some variables
-$tcp_src1 attach $tracefile
-$tcp_src2 attach $tracefile
 
-$tcp_src1 tracevar cwnd_
-$tcp_src2 tracevar cwnd_
+proc traceVars {outfile} {
+global ns tcp_src1 tcp_src2 tcp_sink1 tcp_sink2
+set now [$ns now]				        ;# Read current time
+set nbytes1 [$tcp_sink1 set bytes_]		;# Read number of bytes
+set nbytes2 [$tcp_sink2 set bytes_]		;# Read number of bytes
 
-# $tcp_src1 tracevar ssthresh_
-$tcp_src1 tracevar ack_
-$tcp_src2 tracevar ack_
+$tcp_sink1 set bytes_ 0			        ;# Reset for next epoch
+$tcp_sink2 set bytes_ 0			        ;# Reset for next epoch
 
-$tcp_src1 tracevar rtt_
-$tcp_src2 tracevar rtt_
+
+set cwnd1 [$tcp_src1 set cwnd_]
+set cwnd2 [$tcp_src2 set cwnd_]
+
+set rtt1 [$tcp_src1 set rtt_]
+set rtt2 [$tcp_src2 set rtt_]
+
+set time_incr 0.1
+
+### Prints "TIME throughput" in Mb/sec units to output file
+set goodput1 [expr ($nbytes1 * 8.0 / 1000000) / $time_incr]
+set goodput2 [expr ($nbytes2 * 8.0 / 1000000) / $time_incr]
+puts  $outfile  "$now,$goodput1,$goodput2,$cwnd1,$cwnd2,$rtt1,$rtt2"
+
+### Schedule yourself:
+$ns at [expr $now+$time_incr] "traceVars  $outfile"
+}
+
+traceVars $tracefile
 
 $ns at 0.0 "$ftp_traffic1 start"
 $ns at 0.0 "$ftp_traffic2 start"
