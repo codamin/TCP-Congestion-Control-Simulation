@@ -13,6 +13,10 @@ $ns namtrace-all $namfile
 set traceName [lindex $argv 2]
 set tracefile [open $traceName w]
 
+set traceName_auto [append traceName "_auto"]
+set tracefile_auto [open $traceName_auto w]
+$ns trace-all $tracefile_auto
+
 #Define a 'finish' procedure
 proc finish {} {
     global ns namfile tracefile
@@ -144,14 +148,7 @@ puts  $outfile  ">> $now,$goodput1,$goodput2,$cwnd1,$cwnd2,$rtt1,$rtt2"
 $ns at [expr $now+$time_incr] "traceVars  $outfile"
 }
 
-$ns trace-all $tracefile
-# $tcp_src1 attach $tracefile
-# $tcp_src1 tracevar cwnd_
-# $tcp_src1 tracevar ssthresh_
-# $tcp_src1 tracevar ack_
-# $tcp_src1 tracevar maxseq_
-
-# traceVars $tracefile
+traceVars $tracefile
 
 $ns at 0.0 "$ftp_traffic1 start"
 $ns at 0.0 "$ftp_traffic2 start"
