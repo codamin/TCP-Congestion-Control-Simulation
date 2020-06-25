@@ -138,13 +138,20 @@ set time_incr 0.1
 ### Prints "TIME throughput" in Mb/sec units to output file
 set goodput1 [expr ($nbytes1 * 8.0 / 1000000) / $time_incr]
 set goodput2 [expr ($nbytes2 * 8.0 / 1000000) / $time_incr]
-puts  $outfile  "$now,$goodput1,$goodput2,$cwnd1,$cwnd2,$rtt1,$rtt2"
+puts  $outfile  ">> $now,$goodput1,$goodput2,$cwnd1,$cwnd2,$rtt1,$rtt2"
 
 ### Schedule yourself:
 $ns at [expr $now+$time_incr] "traceVars  $outfile"
 }
 
-traceVars $tracefile
+$ns trace-all $tracefile
+# $tcp_src1 attach $tracefile
+# $tcp_src1 tracevar cwnd_
+# $tcp_src1 tracevar ssthresh_
+# $tcp_src1 tracevar ack_
+# $tcp_src1 tracevar maxseq_
+
+# traceVars $tracefile
 
 $ns at 0.0 "$ftp_traffic1 start"
 $ns at 0.0 "$ftp_traffic2 start"
