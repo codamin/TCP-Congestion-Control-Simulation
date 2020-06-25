@@ -142,7 +142,7 @@ set time_incr 0.1
 ### Prints "TIME throughput" in Mb/sec units to output file
 set goodput1 [expr ($nbytes1 * 8.0 / 1000000) / $time_incr]
 set goodput2 [expr ($nbytes2 * 8.0 / 1000000) / $time_incr]
-puts  $outfile  ">> $now,$goodput1,$goodput2,$cwnd1,$cwnd2,$rtt1,$rtt2"
+puts  $outfile  "$now  $goodput1  $goodput2  $cwnd1  $cwnd2  $rtt1  $rtt2"
 
 ### Schedule yourself:
 $ns at [expr $now+$time_incr] "traceVars  $outfile"

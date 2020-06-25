@@ -1,3 +1,6 @@
 *.nam
 *.tr
+*.tr_auto
+*ipynb_checkpoints
+__pycache__
 out/
