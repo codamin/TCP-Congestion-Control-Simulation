@@ -84,6 +84,7 @@ puts $tcpConType
 set tcp_src1 [new $tcpConType]
 $tcp_src1 set ttl_ 64
 $tcp_src1 set fid_ 1
+$tcp_src1 set packetSize_ 960
 $ns attach-agent $n1 $tcp_src1
 
 #create tcp sink1
@@ -98,6 +99,7 @@ $ns connect $tcp_src1 $tcp_sink1
 set tcp_src2 [new $tcpConType]
 $tcp_src2 set ttl_ 64
 $tcp_src2 set fid_ 2
+$tcp_src2 set packetSize_ 960
 $ns attach-agent $n2 $tcp_src2
 
 #create tcp sink2
@@ -137,7 +139,7 @@ set cwnd2 [$tcp_src2 set cwnd_]
 set rtt1 [$tcp_src1 set rtt_]
 set rtt2 [$tcp_src2 set rtt_]
 
-set time_incr 0.1
+set time_incr 1
 
 ### Prints "TIME throughput" in Mb/sec units to output file
 set goodput1 [expr ($nbytes1 * 8.0 / 1000000) / $time_incr]
